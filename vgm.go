@@ -67,9 +67,13 @@ cycle:
 			return smpl, fmt.Errorf("read next command: %w", err)
 		}
 
+		var args1 Args1
 		var args2 Args2
 
 		switch cmd {
+		// SN76489/SN76496
+		case 0x4f, 0x50:
+			err = binary.Read(vgm.data, binary.LittleEndian, &args1)
 		// YMF271
 		case 0xb4:
 			err = binary.Read(vgm.data, binary.LittleEndian, &args2)
@@ -85,10 +89,14 @@ cycle:
 		case 0x61:
 			err = binary.Read(vgm.data, binary.LittleEndian, &args2)
 			shift = int(args2[0]) + int(args2[1])<<8
+		case 0x62:
+			shift = 735
+		case 0x63:
+			shift = 882
 		case 0x66:
 			return smpl, io.EOF
 		default:
-			if cmd&0x70 != 0 {
+			if cmd&0x70 == 0x70 {
 				shift = int(cmd&0xf) + 1
 			} else {
 				return smpl, fmt.Errorf("unknown command: 0x%x", cmd)
@@ -97,14 +105,7 @@ cycle:
 
 		var buf [2]int32
 
-		if !vgm.secondRun && shift > 0 {
-			vgm.tail = shift - 1
-			shift = 1
-			vgm.secondRun = true
-		} else {
-			shift += vgm.tail
-		}
-
+		shift += vgm.tail
 		for i := range shift {
 			if smpl >= len(out) {
 				if shift-i > 0 {
