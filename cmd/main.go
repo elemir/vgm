@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/elemir/vgm"
 	"github.com/hajimehoshi/oto/v2"
 )
 
@@ -26,7 +27,7 @@ func main() {
 	}
 	defer vgmData.Close()
 
-	vgm, err := NewVGM(vgmData)
+	vgmPlayer, err := vgm.New(vgmData, sampleRate)
 	if err != nil {
 		slog.Error("Unable to parse VGM header", slog.Any("err", err))
 		os.Exit(-1)
@@ -40,7 +41,7 @@ func main() {
 
 	<-readyCh
 
-	player := otoCtx.NewPlayer(vgm)
+	player := otoCtx.NewPlayer(vgmPlayer)
 
 	player.Play()
 	for player.IsPlaying() {

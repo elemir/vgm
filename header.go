@@ -1,4 +1,4 @@
-package main
+package vgm
 
 type VGMHeader struct {
 	FccVGM         [4]byte

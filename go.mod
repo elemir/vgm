@@ -1,4 +1,4 @@
-module github.com/elemir/vgmplay
+module github.com/elemir/vgm
 
 go 1.24.2
 

@@ -1,4 +1,4 @@
-package main
+package vgm
 
 import (
 	"encoding/binary"
@@ -22,7 +22,7 @@ type VGM struct {
 	secondRun bool
 }
 
-func NewVGM(vgmData io.ReadSeeker) (*VGM, error) {
+func New(vgmData io.ReadSeeker, sampleRate uint32) (*VGM, error) {
 	var vgmHeader VGMHeader
 
 	err := binary.Read(vgmData, binary.LittleEndian, &vgmHeader)
